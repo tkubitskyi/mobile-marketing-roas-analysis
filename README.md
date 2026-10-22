@@ -26,11 +26,12 @@ Join key: `app_id + media_source + campaign_id` (same data type in all four tabl
 ## ⚙️ What I Did
 
 1. **Aggregated each source separately before joining.** `cost_table` still has thousands of rows per campaign-day (ad set × geo), so a direct join to event tables would multiply the numbers.
-2. **Cohort revenue attribution.** All revenue (ads and in-app purchases) is attributed to the user's **install date** and campaign, so spend on a day is compared with what the users acquired that day eventually brought in.
-3. **Kept unattributed traffic visible.** Missing `campaign_id` is kept as `-1 / Unattributed` instead of being dropped, so mart totals match the raw tables.
-4. **D7 / D30 revenue windows with cohort maturity flags,** so campaigns of different age can be compared fairly.
-5. **Validated the mart against the raw tables:** install count, spend after EUR → USD conversion (via `cost_usd`), duplicate installs per device, and that `campaign_id` really overlaps between spend and event tables.
-6. **Tableau dashboard:** KPIs, daily spend vs revenue, campaign ROAS with a Cumulative / D7 switch, cumulative vs D7 ROAS by install month, and installs by traffic source.
+2. Checked how revenue is recorded before summing it. Only 4 of 10 in-app event types carry revenue; the rest (trials, cancellations, billing retries) have NULL, and refunds are already negative. So a plain SUM gives net revenue (new subscriptions + renewals − refunds) without filtering by event name.
+3. **Cohort revenue attribution.** All revenue (ads and in-app purchases) is attributed to the user's **install date** and campaign, so spend on a day is compared with what the users acquired that day eventually brought in.
+4. **Kept unattributed traffic visible.** Missing `campaign_id` is kept as `-1 / Unattributed` instead of being dropped, so mart totals match the raw tables.
+5. **D7 / D30 revenue windows with cohort maturity flags,** so campaigns of different age can be compared fairly.
+6. **Validated the mart against the raw tables:** install count, spend after EUR → USD conversion (via `cost_usd`), duplicate installs per device, and that `campaign_id` really overlaps between spend and event tables.
+7. **Tableau dashboard:** KPIs, daily spend vs revenue, campaign ROAS with a Cumulative / D7 switch, cumulative vs D7 ROAS by install month, and installs by traffic source.
 
 ## 📈 Key Findings
 
